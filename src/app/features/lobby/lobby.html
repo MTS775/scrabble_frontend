@@ -1,0 +1,83 @@
+<div class="lobby-page">
+  <header class="topbar">
+    <div class="profile">
+      <div class="avatar">{{ user() ? initials(user()!.username) : 'LN' }}</div>
+      <div>
+        <h1>LexiNorme</h1>
+        <div class="account">
+          <span>{{ user()?.username || 'Joueur' }}</span>
+          <button type="button" (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" aria-label="Paramètres" (click)="openSettings()">⚙</button>
+      <button type="button" aria-label="Nouvelle partie" class="primary" (click)="openNewMatch()">＋</button>
+    </div>
+  </header>
+
+  <main class="match-list">
+    @for (section of ['À mon tour', 'Tour adverse', 'Parties terminées']; track section) {
+      @let items = matches().filter(match =>
+        section === 'À mon tour' ? match.status === 'active' && match.myTurn
+        : section === 'Tour adverse' ? match.status === 'active' && !match.myTurn
+        : match.status === 'finished');
+
+      @if (items.length) {
+        <section>
+          <h2>{{ section }}</h2>
+          <div class="match-card-list">
+            @for (match of items; track match.id) {
+              <button type="button" class="match-row" (click)="openMatch(match)">
+                <div class="opponent-avatar" [class.solo]="match.mode === 'SOLO'">
+                  {{ match.mode === 'SOLO' ? 'LB' : initials(match.opponent) }}
+                </div>
+                <div class="match-info">
+                  <strong>{{ match.opponent }}</strong>
+                  <span>{{ match.lastMove }}</span>
+                </div>
+                <div class="score">
+                  <strong>{{ match.score }}–{{ match.opponentScore }}</strong>
+                  <span [class.turn]="match.myTurn">{{ match.myTurn ? 'À toi' : 'En cours' }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        </section>
+      }
+    }
+  </main>
+
+  <footer class="bottom-bar">
+    <button type="button" (click)="openNewMatch()"><span class="amber">＋</span> Nouvelle</button>
+    <button type="button"><span class="sky">?</span> 102 Jetons</button>
+    <button type="button"><span class="green">↑</span> Partager</button>
+  </footer>
+
+  @if (showNewMatch()) {
+    <div class="modal-backdrop" role="presentation" (click)="closeNewMatch()">
+      <section class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Nouvelle partie 15×15</h2>
+          <button type="button" aria-label="Fermer" (click)="closeNewMatch()">✕</button>
+        </div>
+
+        <div class="mode-tabs">
+          <button type="button" [class.active]="mode() === '2P'" (click)="selectMode('2P')">2 Joueurs</button>
+          <button type="button" [class.active]="mode() === 'SOLO'" (click)="selectMode('SOLO')">Solo</button>
+        </div>
+
+        @if (mode() === '2P') {
+          <label>
+            Nom de l'adversaire
+            <input [value]="opponentName()" (input)="opponentName.set($any($event.target).value)" />
+          </label>
+        }
+
+        <p class="rules">Règles appliquées : <strong>Grille officielle 15×15</strong> &amp; <strong>102 jetons francophones</strong>.</p>
+        <button type="button" class="launch" (click)="createMatch()">Lancer la partie</button>
+      </section>
+    </div>
+  }
+</div>

@@ -1,0 +1,38 @@
+<div class="settings-page">
+  <header class="settings-header">
+    <button type="button" aria-label="Retour" (click)="backToLobby()">‹</button>
+    <h1>Paramètres</h1>
+    <span></span>
+  </header>
+
+  <main class="settings-content">
+    <section>
+      <h2>Achat</h2>
+      <div class="settings-card">
+        <button type="button"><strong>Passer en Premium — USD 6.99</strong><span>Retire toutes les publicités</span></button>
+        <button type="button"><strong>Restaurer l'achat précédent</strong></button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Profil</h2>
+      <div class="settings-card">
+        <button type="button" class="profile-row" (click)="logout()">
+          <span class="profile-avatar">{{ user()?.username?.charAt(0) || 'L' }}</span>
+          <span><strong>{{ user()?.username || 'Joueur' }}</strong><small>Compte LexiNorme — changer de compte</small></span>
+          <b>›</b>
+        </button>
+      </div>
+    </section>
+
+    <section class="settings-card general">
+      <button type="button" (click)="livePoints.set(!livePoints())"><span><strong>Aperçu des points</strong><small>{{ livePoints() ? 'Activé' : 'Désactivé' }}</small></span><b>›</b></button>
+      <button type="button"><span><strong>Thème</strong><small>Sombre officiel FISF</small></span><b>›</b></button>
+      <button type="button" (click)="notifications.set(!notifications())"><span><strong>Notifications</strong><small>{{ notifications() ? 'Alertes activées' : 'Alertes désactivées' }}</small></span><b>›</b></button>
+      <button type="button"><strong>Confidentialité</strong><b>›</b></button>
+      <button type="button"><strong>Aide et règles</strong><b>›</b></button>
+    </section>
+
+    <p class="version">v1.5.0 • 102 jetons • FISF 15×15</p>
+  </main>
+</div>

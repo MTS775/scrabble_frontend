@@ -1,0 +1,25 @@
+<div class="chat-page">
+  <header class="chat-header">
+    <button type="button" class="back-button" aria-label="Retour au plateau" (click)="backToGame()">‹</button>
+    <div class="opponent-avatar">J2</div>
+    <h1>Chat avec {{ opponent }}</h1>
+  </header>
+
+  <main class="messages">
+    @if (messages().length === 0) {
+      <div class="empty"><strong>Dis bonjour à ton adversaire</strong><span>Commence la conversation</span></div>
+    } @else {
+      @for (message of messages(); track $index) {
+        <article class="message" [class.me]="message.from === 'me'">
+          <span>{{ message.text }}</span>
+          <time>{{ message.time }}</time>
+        </article>
+      }
+    }
+  </main>
+
+  <form class="composer" (ngSubmit)="send()">
+    <input [(ngModel)]="draft" name="draft" autocomplete="off" placeholder="Tape un message..." />
+    <button type="submit" aria-label="Envoyer">➤</button>
+  </form>
+</div>

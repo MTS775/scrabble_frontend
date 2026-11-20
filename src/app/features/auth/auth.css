@@ -1,0 +1,53 @@
+.auth-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 20px;
+  overflow-y: auto;
+}
+.auth-card-wrap { width: 100%; max-width: 380px; }
+.brand { text-align: center; margin-bottom: 20px; }
+.brand-mark {
+  position: relative;
+  width: 56px; height: 56px;
+  display: grid; place-items: center;
+  margin: 0 auto 10px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fde68a, #eab308);
+  color: #0f172a;
+  font-size: 24px; font-weight: 900;
+  box-shadow: 0 12px 30px rgba(245, 158, 11, .18);
+}
+.brand-mark span {
+  position: absolute; right: -8px; bottom: -6px;
+  border: 1px solid #334155; border-radius: 7px;
+  background: #0f172a; color: #fbbf24;
+  font-size: 9px; padding: 3px 5px;
+}
+.brand h1 { margin: 0; color: #fff; font-size: 24px; }
+.brand p { margin: 8px 0 0; color: #94a3b8; font-size: 12px; }
+.auth-card {
+  padding: 20px;
+  border: 1px solid rgba(100, 116, 139, .55);
+  border-radius: 16px;
+  background: #232a31;
+  box-shadow: 0 20px 40px rgba(0,0,0,.25);
+}
+button, input { font: inherit; }
+.google-button, .submit-button {
+  width: 100%; border: 0; border-radius: 12px;
+  font-weight: 800; cursor: pointer; transition: .15s;
+}
+.google-button { height: 42px; background: #fff; color: #0f172a; }
+.separator { display: flex; align-items: center; gap: 12px; margin: 14px 0; color: #94a3b8; font-size: 10px; text-transform: uppercase; }
+.separator::before, .separator::after { content: ''; flex: 1; height: 1px; background: #334155; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; margin-bottom: 12px; border: 1px solid #1e293b; border-radius: 12px; background: #161b20; }
+.tabs button { height: 34px; border: 0; border-radius: 8px; background: transparent; color: #94a3b8; font-weight: 800; cursor: pointer; }
+.tabs button.active { background: #2d3843; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+form { display: grid; gap: 12px; }
+label { display: grid; gap: 5px; color: #cbd5e1; font-size: 11px; font-weight: 700; }
+label input { height: 40px; border: 1px solid #334155; border-radius: 12px; background: #161b20; color: #fff; padding: 0 12px; outline: none; }
+label input:focus { border-color: #0ea5e9; }
+.form-error { margin: 0; border: 1px solid rgba(239,68,68,.4); border-radius: 8px; background: rgba(127,29,29,.5); color: #f87171; padding: 8px 10px; font-size: 12px; }
+.submit-button { height: 42px; background: #0284c7; color: #fff; box-shadow: 0 10px 20px rgba(8,47,73,.35); }
+.submit-button:hover { background: #0ea5e9; }
