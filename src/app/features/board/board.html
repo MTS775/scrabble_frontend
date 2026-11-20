@@ -1,0 +1,99 @@
+<div class="board-page">
+  <header class="game-header">
+    <button type="button" class="icon-button" aria-label="Retour au lobby" (click)="backToLobby()">‹</button>
+    <div class="game-status">
+      <div class="last-move">{{ lastMove() }}</div>
+      <div class="bag-status">Il reste {{ bagRemaining }} tuiles sur {{ official.totalTiles }}</div>
+    </div>
+    <button type="button" class="icon-button chat-button" aria-label="Ouvrir la messagerie avec l'adversaire" (click)="openChat()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 0 1-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8Z"/></svg>
+      <span class="chat-unread-dot"></span>
+    </button>
+  </header>
+
+  <section class="scoreboard" aria-label="Scores des joueurs">
+    @for (player of players(); track $index) {
+      <article class="player-card" [class.active]="currentPlayerIndex() === $index">
+        <div class="player-name"><span class="avatar">{{ $index === 0 ? 'J1' : 'J2' }}</span><strong>{{ player.name }}</strong></div>
+        <strong class="player-score">{{ player.score }}</strong>
+      </article>
+    }
+  </section>
+
+  <main class="board-zone">
+    <div class="board-grid" role="grid" aria-label="Plateau Scrabble officiel 15 par 15">
+      @for (row of board(); track $index; let r = $index) {
+        @for (cell of row; track $index; let c = $index) {
+          <button type="button" role="gridcell" class="board-cell" [ngClass]="bonusClass(cell.bonus)" [attr.aria-label]="'Case ' + (r + 1) + '-' + (c + 1)" (click)="cellClick(r, c)" (dragover)="allowDrop($event)" (drop)="dropTile($event, r, c)">
+            @if (cell.tile) {
+              <span class="tile" [class.tile-temp]="!cell.tile.locked" [class.tile-locked]="cell.tile.locked" [class.tile-joker]="cell.tile.isJoker" [attr.draggable]="cell.tile.locked ? null : true" (dragstart)="dragBoardTile($event, r, c)">
+                <span class="tile-letter">{{ cell.tile.assignedLetter || cell.tile.letter }}</span>
+                @if (!cell.tile.isJoker) { <span class="tile-points">{{ cell.tile.points }}</span> }
+              </span>
+            } @else if (bonusLabel(cell.bonus)) {
+              <span class="cell-label">{{ bonusLabel(cell.bonus) }}</span>
+            }
+          </button>
+        }
+      }
+    </div>
+  </main>
+
+  <footer class="game-footer">
+    <div class="rack-container" aria-label="Chevalet du joueur actif">
+      @for (tile of activePlayer.rack; track $index; let i = $index) {
+        <button type="button" class="rack-slot" [class.empty]="!tile" [attr.aria-label]="tile ? 'Glisser la tuile ' + (tile.assignedLetter || tile.letter) : 'Emplacement vide'" (click)="selectRackTile(i)" (dragover)="allowDrop($event)" (drop)="dropOnRack($event, i)">
+          @if (tile) {
+            <span class="tile rack-tile" [class.tile-selected]="selectedRackIndex() === i" [class.tile-joker]="tile.isJoker" [attr.draggable]="true" (dragstart)="dragRackTile($event, i)">
+              <span class="tile-letter">{{ tile.assignedLetter || tile.letter }}</span>
+              @if (!tile.isJoker) { <span class="tile-points">{{ tile.points }}</span> }
+            </span>
+          }
+        </button>
+      }
+    </div>
+
+    <div class="action-bar">
+      <button type="button" class="pill-button primary-action" [class.ready]="temporaryTiles > 0" (click)="primaryAction()">
+        {{ temporaryTiles > 0 ? 'Jouer +' + temporaryTiles : 'Passer' }}
+      </button>
+      <button type="button" class="pill-button" (click)="secondaryAction()">{{ temporaryTiles > 0 ? 'Effacer' : 'Mélanger' }}</button>
+      <button type="button" class="pill-button" [disabled]="!canExchange" (click)="toggleExchange()">Échanger</button>
+      <button type="button" class="pill-button menu-button" aria-label="Options">•••</button>
+    </div>
+  </footer>
+
+  @if (jokerPlacement()) {
+    <div class="modal-backdrop" role="presentation" (click)="cancelJoker()">
+      <section class="modal joker-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+        <h2>Choisir la lettre du joker</h2><p>Le joker vaut 0 point.</p>
+        <div class="letter-grid">
+          @for (letter of alphabet; track letter) { <button type="button" (click)="chooseJokerLetter(letter)">{{ letter }}</button> }
+        </div>
+        <button type="button" class="cancel-button" (click)="cancelJoker()">Annuler</button>
+      </section>
+    </div>
+  }
+
+  @if (exchangeOpen()) {
+    <div class="modal-backdrop" role="presentation" (click)="toggleExchange()">
+      <section class="modal exchange-modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+        <h2>Échanger des tuiles</h2><p>Sélectionnez les tuiles à remettre dans le sac.</p>
+        <div class="exchange-grid">
+          @for (tile of activePlayer.rack; track $index; let i = $index) {
+            <button type="button" class="exchange-slot" [class.selected]="exchangeIndices().has(i)" [disabled]="!tile" (click)="toggleExchangeTile(i)">
+              @if (tile) {
+                <span class="tile rack-tile">
+                  <span class="tile-letter">{{ tile.assignedLetter || tile.letter }}</span>
+                  @if (!tile.isJoker) { <span class="tile-points">{{ tile.points }}</span> }
+                </span>
+              }
+            </button>
+          }
+        </div>
+        <button type="button" class="exchange-confirm" [disabled]="exchangeIndices().size === 0" (click)="confirmExchange()">Échanger</button>
+      </section>
+    </div>
+  }
+</div>
+
