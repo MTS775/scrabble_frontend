@@ -1,0 +1,49 @@
+<main class="auth-page">
+  <div class="auth-card-wrap">
+    <div class="brand">
+      <div class="brand-mark">L<span>15×15</span></div>
+      <h1>LexiNorme</h1>
+      <p>Scrabble francophone officiel • 102 jetons & grille réglementaire</p>
+    </div>
+
+    <section class="auth-card">
+      <button type="button" class="google-button" (click)="loginWithGoogle()">
+        Continuer avec Google
+      </button>
+
+      <div class="separator"><span>ou avec votre compte</span></div>
+
+      <div class="tabs">
+        <button type="button" [class.active]="mode() === 'login'" (click)="setMode('login')">Connexion</button>
+        <button type="button" [class.active]="mode() === 'register'" (click)="setMode('register')">Inscription</button>
+      </div>
+
+      <form (ngSubmit)="submit()" novalidate>
+        @if (mode() === 'register') {
+          <label>
+            Pseudo joueur
+            <input [(ngModel)]="username" name="username" type="text" placeholder="Ex: th professor" />
+          </label>
+        }
+
+        <label>
+          Adresse e-mail
+          <input [(ngModel)]="email" name="email" type="email" placeholder="joueur@lexinorme.fr" required />
+        </label>
+
+        <label>
+          Mot de passe
+          <input [(ngModel)]="password" name="password" type="password" placeholder="••••••••" required />
+        </label>
+
+        @if (error()) {
+          <p class="form-error">{{ error() }}</p>
+        }
+
+        <button type="submit" class="submit-button">
+          {{ mode() === 'login' ? 'Se connecter' : 'Créer mon compte' }}
+        </button>
+      </form>
+    </section>
+  </div>
+</main>
